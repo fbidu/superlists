@@ -1,0 +1,4 @@
+{
+    "python.pythonPath": "/home/fbidu/.local/share/virtualenvs/project01-cWHtmc3l/bin/python",
+    "python.linting.pylintArgs": ["--load-plugins", "pylint_django"]
+}
