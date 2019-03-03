@@ -4,7 +4,7 @@ Description=Gunicorn server for DOMAIN
 [Service]
 Restart=on-failure
 User=ubuntu
-WorkingDirectory=/home/ubuntu/sites/DOMAIN
+WorkingDirectory=/home/ubuntu/django-apps/DOMAIN
 
 ExecStart=/home/ubuntu/miniconda3/bin/pipenv run gunicorn \
     --bind unix:/tmp/DOMAIN.socket \
