@@ -129,27 +129,34 @@ class ListViewTest(TestCase):
         self.assertNotContains(response, "other list item 2")
 
     def test_passes_correct_list_to_template(self):
-        other_list = List.objects.create()
+        """
+        If we have more than one list, are we still rendering the right one?
+        """
+        # Creating a dummy, empty list
+        other_list = List.objects.create()  # pylint: disable=unused-variable
+        # Creating the list we want
         correct_list = List.objects.create()
+        # Loading the list we want
         response = self.client.get(f"/lists/{correct_list.id}/")
 
+        # Checking if the correct list was sent in the context
         self.assertEqual(response.context["list"], correct_list)
-
-
-class NewItemTest(TestCase):
-    """
-    Tests the addition of new items to a current list
-    """
 
     def test_can_save_a_post_request_to_an_existing_list(self):
         """
-        as written by me!
+        Tests if we can send a post request to an existing list
+        and save it. This test was written by me without checking
+        the book's solution.
         """
+        # Creates a new list
         list_ = List.objects.create()
+        # Adds an item to that list
         first_item = Item.objects.create(text="Hai", list=list_)
+        # Data regarding a new item we want to add
         new_item = {"item_text": "new item!"}
-        self.client.post(f"/lists/{list_.id}/add_item", data=new_item)
-
+        # Posts the item
+        self.client.post(f"/lists/{list_.id}/", data=new_item)
+        # Reading the list
         response = self.client.get(f"/lists/{list_.id}/")
 
         # This assertion looks more like an functional test than an unit one
@@ -161,30 +168,40 @@ class NewItemTest(TestCase):
 
     def test_can_save_a_post_request_to_an_existing_list_book(self):
         """
-        as appears on the book
+        This is the same test as the above, but as written in the book
         """
+        # Creates two lists, to check if we're saving the data in the right one
         other_list = List.objects.create()
         correct_list = List.objects.create()
 
+        # Posts a new item to the correct list
         self.client.post(
-            f"/lists/{correct_list.id}/add_item", data={"item_text": "A new item!"}
+            f"/lists/{correct_list.id}/", data={"item_text": "A new item!"}
         )
 
+        # Do we have only _one_ item in the database?
         self.assertEqual(Item.objects.count(), 1)
+        # Which item is it?
         new_item = Item.objects.first()
+        # Is it the one we just sent?
         self.assertEqual(new_item.text, "A new item!")
+        # Is it assigned to the correct list?
         self.assertEqual(new_item.list, correct_list)
+        # Is the list we didn't touch still empty?
         self.assertEqual(Item.objects.filter(list=other_list).count(), 0)
 
-    def test_redirects_to_list_view(self):
+    def test_post_redirects_to_list_view(self):
         """
         Tests if the correct redirection is being used
         """
-        other_list = List.objects.create()
+        # Again, two lists. One we don't want to change and another one we do
+        other_list = List.objects.create()  # pylint: disable=unused-variable
         correct_list = List.objects.create()
 
+        # Creating a new item in the list we do want to change
         response = self.client.post(
-            f"/lists/{correct_list.id}/add_item", data={"item_text": "Anothe item!"}
+            f"/lists/{correct_list.id}/", data={"item_text": "Another item!"}
         )
 
+        # Are we going to be redirect to the correct list?
         self.assertRedirects(response, f"/lists/{correct_list.id}/")
