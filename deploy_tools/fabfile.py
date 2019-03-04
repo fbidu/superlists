@@ -17,22 +17,24 @@ def _update_pipenv():
     if not exists(f"/home/{env.user}/miniconda3/bin/pipenv"):
         run(f"pip install --user pipenv")
 
-    run("pipenv install")
+    run(f"/home/{env.user}/miniconda3/bin/pipenv install")
 
 def _update_dotenv():
     pass
 
 def _update_static_files():
-    run("pipenv python run manage.py collectstatic --noinput")
+    run(f"/home/{env.user}/miniconda3/bin/pipenv run python manage.py collectstatic --noinput")
 
 def _update_database():
-    run("pipenv python manage.py migrate --noinput")
+    run(f"/home/{env.user}/miniconda3/bin/pipenv run python manage.py migrate --noinput")
 
 def deploy():
     site_folder = f"/home/{env.user}/django-apps/{env.host}"
     run(f"mkdir -p {site_folder}")
     with cd(site_folder):
         _get_latest_source()
+
+    with cd(f"{site_folder}/superlists"):
         _update_pipenv()
         _update_dotenv()
         _update_static_files()
