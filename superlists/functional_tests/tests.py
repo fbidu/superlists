@@ -4,14 +4,16 @@ Functional tests for the Lists app
 import os
 import time
 
+from unittest import skip
+
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
 
-class NewVisitorTest(StaticLiveServerTestCase):
+class FunctionalTests(StaticLiveServerTestCase):
     """
-    Functional tests for a new user
+    Base class for functional testing
     """
 
     def setUp(self):
@@ -42,6 +44,12 @@ class NewVisitorTest(StaticLiveServerTestCase):
         rows = table.find_elements_by_tag_name("tr")
         self.assertIn(row_text, [row.text for row in rows])
 
+
+class NewVisitorTest(FunctionalTests):
+    """
+    Functional tests for a new user
+    """
+
     def test_can_start_a_list_and_retrieve_it_later(self):
         """
         Tests if a client can start a list, add items and
@@ -49,13 +57,6 @@ class NewVisitorTest(StaticLiveServerTestCase):
         """
         # Edith heard about a cool new online to-do app. She checks the homepage.
         self.browser.get(self.live_server_url)
-        self.browser.set_window_size(1024, 768)
-
-        # She notices the input box is nicely centered
-        input_box = self.browser.find_element_by_id("id_new_item")
-        self.assertAlmostEqual(
-            input_box.location["x"] + input_box.size["width"] / 2, 512, delta=5
-        )
 
         # She notices the page title and header mention to-do lists
         self.assertIn("To-Do", self.browser.title)
@@ -116,3 +117,49 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.assertNotIn("Buy 00 Flour", page_text)
         self.assertNotIn("Buy canned tomatoes", page_text)
         self.assertIn("milk", page_text)
+
+
+class LayoutAndStylingTest(FunctionalTests):
+    """
+    Class for testing layout
+    """
+
+    def test_layout_and_styling(self):
+        """
+        Basic test for centering
+        """
+        # Edith heard about a cool new online to-do app. She checks the homepage.
+        self.browser.get(self.live_server_url)
+        self.browser.set_window_size(1024, 768)
+
+        # She notices the input box is nicely centered
+        input_box = self.browser.find_element_by_id("id_new_item")
+        self.assertAlmostEqual(
+            input_box.location["x"] + input_box.size["width"] / 2, 512, delta=5
+        )
+
+
+class ItemValidationTest(FunctionalTests):
+    """
+    Class that provides input validation
+    """
+
+    @skip
+    def test_cannot_add_empty_list_items(self):
+        """
+        Tests input validation - empty items are forbidden!
+        """
+        # Edith goes to the home page and accidentally tries to submit
+        # an empty list item. She hits Enter on the empty input box
+
+        # The home page refreshes and there is an error message
+        # saying that list items cannot be blank
+
+        # She tries again with some text for the item, which works
+
+        # Perversely, she now decides to submit a second blank list item
+
+        # She receives a similar warning on the list page
+
+        # And she can correct it by filling some text in
+        self.fail("Write me!")
