@@ -4,6 +4,7 @@ Module that supplies all the views for the Lists app
 from django.core.exceptions import ValidationError
 from django.shortcuts import redirect, render
 
+from lists.forms import ItemForm
 from lists.models import Item, List
 
 
@@ -11,7 +12,7 @@ def home_page(request):
     """
     Renders our simple home_page view and process POST requests
     """
-    return render(request, "home.html")
+    return render(request, "home.html", {"form": ItemForm()})
 
 
 def new_list(request):
