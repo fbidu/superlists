@@ -205,3 +205,24 @@ class ListViewTest(TestCase):
 
         # Are we going to be redirect to the correct list?
         self.assertRedirects(response, f"/lists/{correct_list.id}/")
+
+    def test_validation_errors_end_up_on_lists_page(self):
+        """
+        Checks if validation errors are exposed by the view
+        """
+        # Create a new list
+        list_ = List.objects.create()
+        # Adds an invalid item
+        response = self.client.post(
+            f"/lists/{list_.id}/",
+            data={"item_text": ""}
+        )
+
+        # Did we have an HTTP-200?
+        self.assertEqual(response.status_code, 200)
+        # Was the correct template used?
+        self.assertTemplateUsed(response, "list.html")
+        # The error message we expect to see
+        expected_error = escape("You can't have an empty list item")
+        # Do we actually see that message?
+        self.assertContains(response, expected_error)
