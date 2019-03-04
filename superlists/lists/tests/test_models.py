@@ -44,8 +44,19 @@ class ListAndItemModelTest(TestCase):
         self.assertEqual(second_saved_item.list, list_)
 
     def test_cannot_save_empty_list_items(self):
+        """
+        Tests if trying to save an empty item raises a ValidationError
+        """
         list_ = List.objects.create()
         item = Item(list=list_, text="")
         with self.assertRaises(ValidationError):
             item.full_clean()
             item.save()
+
+    def test_get_absolute_url(self):
+        """
+        Tests if a list object is able to compute the URL to
+        its representation
+        """
+        list_ = List.objects.create()
+        self.assertEqual(list_.get_absolute_url(), f"/lists/{list_.id}/")
