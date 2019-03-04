@@ -35,15 +35,6 @@ class FunctionalTests(StaticLiveServerTestCase):
         # Closes the browser
         self.browser.quit()
 
-    def check_for_row_in_list_table(self, row_text):
-        """
-        Helper function that checks if a text occurs inside
-        the id_list_table table
-        """
-        table = self.browser.find_element_by_id("id_list_table")
-        rows = table.find_elements_by_tag_name("tr")
-        self.assertIn(row_text, [row.text for row in rows])
-
     # pylint: disable=invalid-name
     def wait_for(self, fn):
         """

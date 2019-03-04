@@ -1,8 +1,6 @@
 """
 Functional tests for the Lists app
 """
-import time
-
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
@@ -38,21 +36,31 @@ class NewVisitorTest(FunctionalTests):
         # When she hits enter, the page updates, and now the page lists
         # "1: Buy 00 Flour" as an item in a to-do list
         input_box.send_keys(Keys.ENTER)
-        time.sleep(2)
-        edith_list_url = self.browser.current_url
-        self.assertRegex(edith_list_url, "/lists/.+")
-        self.check_for_row_in_list_table("1: Buy 00 Flour")
+        self.wait_for_row_in_list_table("1: Buy 00 Flour")
 
         # There is still a text box inviting her to add another item. She
         # enters "Buy canned tomatoes"
         input_box = self.browser.find_element_by_id("id_new_item")
         input_box.send_keys("Buy canned tomatoes")
         input_box.send_keys(Keys.ENTER)
-        time.sleep(2)
 
         # The page updates again, and now shows both items on her list
-        self.check_for_row_in_list_table("1: Buy 00 Flour")
-        self.check_for_row_in_list_table("2: Buy canned tomatoes")
+        self.wait_for_row_in_list_table("1: Buy 00 Flour")
+        self.wait_for_row_in_list_table("2: Buy canned tomatoes")
+
+        # Satisfied, she goes back to sleep
+
+    def test_multiple_users_can_start_lists_at_different_urls(self):
+        # Edith starts a new to-do list
+        self.browser.get(self.live_server_url)
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('Buy 00 Flour')
+        inputbox.send_keys(Keys.ENTER)
+        self.wait_for_row_in_list_table('1: Buy 00 Flour')
+
+        # She notices that her list has a unique URL
+        edith_list_url = self.browser.current_url
+        self.assertRegex(edith_list_url, '/lists/.+')
 
         # Now a new user, Francis, comes along to the site.
         self.browser.quit()
@@ -69,7 +77,8 @@ class NewVisitorTest(FunctionalTests):
         input_box = self.browser.find_element_by_id("id_new_item")
         input_box.send_keys("Buy milk")
         input_box.send_keys(Keys.ENTER)
-        time.sleep(2)
+        self.wait_for_row_in_list_table("1: Buy milk")
+
         # Francis gets his own unique URL
         francis_list_url = self.browser.current_url
         self.assertRegex(francis_list_url, "/lists/.+")
@@ -77,7 +86,8 @@ class NewVisitorTest(FunctionalTests):
 
         # Again, there's no trace of Edith's list
         page_text = self.browser.find_element_by_tag_name("body").text
-
         self.assertNotIn("Buy 00 Flour", page_text)
         self.assertNotIn("Buy canned tomatoes", page_text)
         self.assertIn("milk", page_text)
+
+        # Satisfied, they both go back to sleep
