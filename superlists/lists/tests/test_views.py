@@ -16,7 +16,7 @@ def remove_csrf_token(response):
     """
     remove_csrf_token removes the contents of a CSRF token present in a 
     rendered template.
-    
+
     Those tokens change everytime the page is rendered, so they must be
     extracted before we try to assert that the contents are equal.
     """
@@ -54,43 +54,6 @@ class HomePageTest(TestCase):
 
         # Finally, we check everything
         self.assertEqual(observed_html, expected_html)
-
-
-class ListAndItemModelTest(TestCase):
-    """
-    ItemModelTest provides tests for the Item ORM model
-    """
-
-    def test_saving_and_retrieving_items(self):
-        """
-        Tests if we are able to create new lists and items,
-        save them and then retrieve all of them
-        """
-        list_ = List()
-        list_.save()
-
-        first_item = Item()
-        first_item.text = "The first (ever) list item"
-        first_item.list = list_
-        first_item.save()
-
-        second_item = Item()
-        second_item.text = "Item the second"
-        second_item.list = list_
-        second_item.save()
-
-        saved_list = List.objects.first()
-        self.assertEqual(saved_list, list_)
-
-        saved_items = Item.objects.all()
-        self.assertEqual(saved_items.count(), 2)
-
-        first_saved_item = saved_items[0]
-        second_saved_item = saved_items[1]
-        self.assertEqual(first_saved_item.text, "The first (ever) list item")
-        self.assertEqual(first_saved_item.list, list_)
-        self.assertEqual(second_saved_item.text, "Item the second")
-        self.assertEqual(second_saved_item.list, list_)
 
 
 class NewListTest(TestCase):
