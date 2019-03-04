@@ -9,6 +9,7 @@ pylint = "*"
 pylint-django = "*"
 fabric3 = "*"
 black = "*"
+pytest = "*"
 
 [packages]
 django = "*"
