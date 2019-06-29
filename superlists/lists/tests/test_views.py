@@ -31,6 +31,8 @@ class HomePageTest(TestCase):
     HomePageTest provides a suite of tests for our homepage
     """
 
+    maxDiff = None
+
     def test_root_url_resolves_to_homepage_view(self):
         """
         Tests if the homepage works!
@@ -51,11 +53,11 @@ class HomePageTest(TestCase):
         observed_html = remove_csrf_token(response)
 
         # We'll have the same problem while rendering the expected response.
-        expected_response = render(request, "home.html")
+        expected_response = render(request, "home.html", {"form": ItemForm()})
         expected_html = remove_csrf_token(expected_response)
 
         # Finally, we check everything
-        self.assertEqual(observed_html, expected_html)
+        self.assertMultiLineEqual(observed_html, expected_html)
 
     def test_home_page_uses_item_form(self):
         """
@@ -63,6 +65,7 @@ class HomePageTest(TestCase):
         """
         response = self.client.get("/")
         self.assertIsInstance(response.context["form"], ItemForm)
+
 
 class NewListTest(TestCase):
     """
@@ -220,10 +223,7 @@ class ListViewTest(TestCase):
         # Create a new list
         list_ = List.objects.create()
         # Adds an invalid item
-        response = self.client.post(
-            f"/lists/{list_.id}/",
-            data={"item_text": ""}
-        )
+        response = self.client.post(f"/lists/{list_.id}/", data={"item_text": ""})
 
         # Did we have an HTTP-200?
         self.assertEqual(response.status_code, 200)

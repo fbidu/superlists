@@ -11,7 +11,7 @@ class ItemFormTest(TestCase):
     Tests for the form that manages list items
     """
 
-    def test_form_render_item_text_input(self):
+    def test_form_item_input_has_placeholder_and_css_classes(self):
         """
         Is the form being rendered correctly?
         """

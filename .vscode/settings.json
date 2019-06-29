@@ -2,5 +2,18 @@
     "python.pythonPath": "/home/fbidu/.local/share/virtualenvs/superlists-pG2s2-Ci/bin/python",
     "python.linting.pylintArgs": [
         "--load-plugins=pylint_django",
+    ],
+    "python.testing.pytestArgs": [
+        "superlists"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.nosetestsEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "python.testing.unittestArgs": [
+        "-v",
+        "-s",
+        "./superlists",
+        "-p",
+        "*_test.py"
     ]
 }
