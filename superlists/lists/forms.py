@@ -13,6 +13,10 @@ class ItemForm(forms.models.ModelForm):
     ItemForm is the form we use to add an item
     """
 
+    def save(self, for_list):
+        self.instance.list = for_list
+        return super().save()
+
     class Meta:
         model = Item
         fields = ("text",)
@@ -25,3 +29,5 @@ class ItemForm(forms.models.ModelForm):
             )
         }
         error_messages = {"text": {"required": EMPTY_ITEM_ERROR}}
+
+    
