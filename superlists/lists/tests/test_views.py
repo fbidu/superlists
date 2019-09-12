@@ -1,5 +1,5 @@
 """
-Unit tests for the functions in the list app
+Unit tests for our views
 """
 import re
 
@@ -28,10 +28,8 @@ def remove_csrf_token(response):
 
 class HomePageTest(TestCase):
     """
-    HomePageTest provides a suite of tests for our homepage
+    HomePageTest provides a suite of unit tests for our homepage view
     """
-
-    maxDiff = None
 
     def test_root_url_resolves_to_homepage_view(self):
         """
@@ -137,7 +135,7 @@ class ListViewTest(TestCase):
     def test_for_invalid_input_shows_error_on_page(self):
         response = self.post_invalid_input()
         self.assertContains(response, escape(EMPTY_ITEM_ERROR))
-    
+
     def test_uses_list_template(self):
         """
         Is the list rendered with the correct template?
@@ -212,9 +210,7 @@ class ListViewTest(TestCase):
         correct_list = List.objects.create()
 
         # Posts a new item to the correct list
-        self.client.post(
-            f"/lists/{correct_list.id}/", data={"text": "A new item!"}
-        )
+        self.client.post(f"/lists/{correct_list.id}/", data={"text": "A new item!"})
 
         # Do we have only _one_ item in the database?
         self.assertEqual(Item.objects.count(), 1)
